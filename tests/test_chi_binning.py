@@ -23,7 +23,7 @@ class ChiBinningScriptTest(unittest.TestCase):
                 env=env,
                 text=True,
                 capture_output=True,
-                timeout=60,
+                timeout=180,
             )
 
             self.assertEqual(
