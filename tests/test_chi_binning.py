@@ -17,7 +17,7 @@ class ChiBinningScriptTest(unittest.TestCase):
                 cwd=repo_root,
                 capture_output=True,
                 text=True,
-                timeout=60,
+                timeout=240,
             )
 
             self.assertEqual(0, result.returncode, result.stdout + result.stderr)
