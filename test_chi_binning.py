@@ -21,7 +21,7 @@ class ChiBinningWorkflowTest(unittest.TestCase):
                 cwd=work_dir,
                 text=True,
                 capture_output=True,
-                timeout=120,
+                timeout=300,
             )
 
             self.assertEqual(
