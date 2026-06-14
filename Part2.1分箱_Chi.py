@@ -396,7 +396,7 @@ for col in numerical_var:
         while (not monotone):
             # 检验分箱后的单调性是否满足。如果不满足，则缩减分箱的个数。
             max_interval -= 1
-            cutOff = ChiMerge(trainData, col, '', max_interval=max_interval, special_attribute=[],
+            cutOff = ChiMerge(trainData, col, 'result', max_interval=max_interval, special_attribute=[],
                                                  minBinPcnt=0)
             trainData[col + '_Bin'] = trainData[col].map(
                 lambda x: AssignBin(x, cutOff, special_attribute=[]))
