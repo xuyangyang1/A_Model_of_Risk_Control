@@ -1,4 +1,5 @@
 import ast
+import importlib.util
 import math
 import pickle
 import shutil
@@ -40,6 +41,24 @@ class Part2ChiRegressionTests(unittest.TestCase):
         self.assertTrue(math.isinf(assigned_group))
         self.assertGreater(assigned_group, split_points[-1])
 
+    def test_chi_merge_retry_never_uses_empty_target(self):
+        tree = ast.parse(SCRIPT.read_text(encoding="utf-8"), filename=str(SCRIPT))
+        empty_target_calls = []
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            if not isinstance(node.func, ast.Name) or node.func.id != "ChiMerge":
+                continue
+            if len(node.args) >= 3 and isinstance(node.args[2], ast.Constant):
+                if node.args[2].value == "":
+                    empty_target_calls.append(node.lineno)
+
+        self.assertEqual([], empty_target_calls)
+
+    @unittest.skipUnless(
+        importlib.util.find_spec("pandas"),
+        "pandas is required to run the checked-in Chi workflow",
+    )
     def test_checked_in_dataset_completes_chi_binning_workflow(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_path = Path(temp_dir)
