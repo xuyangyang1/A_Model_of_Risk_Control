@@ -1,3 +1,4 @@
+import ast
 import math
 import unittest
 from pathlib import Path
@@ -7,17 +8,23 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 CHI_SCRIPT = REPO_ROOT / "Part2.1分箱_Chi.py"
 
 
-def load_chi_functions():
+def load_assign_group():
     source = CHI_SCRIPT.read_text(encoding="utf-8")
-    function_source = source.split("#读取数据", 1)[0]
+    module = ast.parse(source, filename=str(CHI_SCRIPT))
+    assign_group = next(
+        node for node in module.body
+        if isinstance(node, ast.FunctionDef) and node.name == "AssignGroup"
+    )
     namespace = {}
-    exec(compile(function_source, str(CHI_SCRIPT), "exec"), namespace)
-    return namespace
+    function_module = ast.Module(body=[assign_group], type_ignores=[])
+    ast.fix_missing_locations(function_module)
+    exec(compile(function_module, str(CHI_SCRIPT), "exec"), namespace)
+    return namespace["AssignGroup"]
 
 
 class ChiBinningRegressionTests(unittest.TestCase):
     def test_assign_group_overflow_bucket_sorts_after_large_values(self):
-        assign_group = load_chi_functions()["AssignGroup"]
+        assign_group = load_assign_group()
         split_points = [1_600_000_000_000, 1_700_000_000_000]
 
         grouped_values = [
